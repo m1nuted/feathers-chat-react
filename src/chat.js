@@ -18,7 +18,6 @@ class Chat extends Component {
 
   scrollToBottom() {
     const chat = this.chat;
-
     chat.scrollTop = chat.scrollHeight - chat.clientHeight;
   }
 
@@ -44,6 +43,9 @@ class Chat extends Component {
             alt="Feathers Logo" />
           <span className="title">Chat</span>
         </div>
+          <a href="#" onClick={() => client.logout()} className="button button-primary">
+              Sign Out
+          </a>
       </header>
 
       <div className="flex flex-row flex-1 clear">
@@ -63,9 +65,7 @@ class Chat extends Component {
             </li>)}
           </ul>
           <footer className="flex flex-row flex-center">
-            <a href="#" onClick={() => client.logout()} className="button button-primary">
-              Sign Out
-            </a>
+
           </footer>
         </aside>
 
