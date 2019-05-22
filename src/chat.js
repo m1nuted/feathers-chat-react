@@ -2,93 +2,141 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import client from './feathers';
 
+
+//TODO  => the aside section when a message is too long shrinks in a bad way. Need to be fixed.
+
+
 class Chat extends Component {
-  sendMessage(ev) {
+
+    constructor(props){
+
+        super(props);
+        this.state = {
+            text: 0
+        }
+    }
+
+    sendMessage(ev) {
+
     const input = ev.target.querySelector('[name="text"]');
-    const text = input.value.trim();
+    let text = input.value.trim();
+
+    text.includes("/kick") ? text = this.kickUser(text) : null;
+
+    var texts = text.replace(/\//gi, "/,").split(",");
+
+    texts[0] == "/" ? this.specialCommand(text) : null
+
+
+    console.log(texts);
 
     if(text) {
       client.service('messages').create({ text }).then(() => {
         input.value = '';
       });
     }
-
     ev.preventDefault();
-  }
+    }
 
-  scrollToBottom() {
+    specialcommand(command){
+
+    }
+
+    kickUser(text){
+
+      const {users} = this.props;
+
+      let texts = text.split(" ");
+      let user = texts[1]
+
+      let listOfUsers = [];
+
+      users.forEach(u => {
+          listOfUsers.push(u.email)
+      })
+
+      let message = ""
+
+
+      texts.length !== 2 ? message = "incorrect number of parameters" : listOfUsers.includes(user) ? message = "Attempting to kick " + user + "..." : message = "There's no such user";
+
+      return message
+    }
+
+    scrollToBottom() {
     const chat = this.chat;
-    chat.scrollTop = chat.scrollHeight - chat.clientHeight;
-  }
+    chat.scrollIntoView(false)
+    }
 
-  componentDidMount() {
+    componentDidMount() {
     this.scrollToBottom = this.scrollToBottom.bind(this);
 
     client.service('messages').on('created', this.scrollToBottom);
     this.scrollToBottom();
-  }
+    }
 
-  componentWillUnmount() {
-    // Clean up listeners
+    componentWillUnmount() {
+        // Clean up listeners
     client.service('messages').removeListener('created', this.scrollToBottom);
-  }
+    }
 
-  render() {
+    userDetail(user){
+      alert("you clicked on " + user.email + " from " + user.location);
+    }
+
+
+    render() {
+
     const { users, messages } = this.props;
 
-    return <main className="flex flex-column">
-      <header className="title-bar flex flex-row flex-center">
-        <div className="title-wrapper block center-element">
-          <img className="logo" src="http://feathersjs.com/img/feathers-logo-wide.png"
-            alt="Feathers Logo" />
-          <span className="title">Chat</span>
-        </div>
-          <a href="#" onClick={() => client.logout()} className="button button-primary">
-              Sign Out
-          </a>
+    return <main>
+      <header>
+          <img className="logo" src="./logo.jpg" alt="Feathers Logo" style={{minWidth:"150px", width:"20%"}} />
+              <a href="#" onClick={() => client.logout()} className="button button-primary">
+                  Sign Out
+              </a>
       </header>
 
-      <div className="flex flex-row flex-1 clear">
-        <aside className="sidebar col col-3 flex flex-column flex-space-between">
-          <header className="flex flex-row flex-center">
-            <h4 className="font-300 text-center">
-              <span className="font-600 online-count">{users.length}</span> users
-            </h4>
-          </header>
+        <aside>
+            <div className="asideHeader">
+                <h4>
+                    <span>{users.length}</span> users
+                </h4>
+            </div>
 
-          <ul className="flex flex-column flex-1 list-unstyled user-list">
-            {users.map(user => <li key={user._id}>
-              <a className="block relative" href="#">
-                <img src={user.avatar} alt={user.email} className="avatar" />
-                <span className="absolute username">{user.email}</span>
-              </a>
-            </li>)}
-          </ul>
-          <footer className="flex flex-row flex-center">
-
-          </footer>
+            <div className="userList">
+                <ul>
+                    {users.map(user => <li key={user._id}>
+                        <a className="block relative" href="#">
+                            <span className="username" onClick={(()=>this.userDetail(user))}>{user.email}</span>
+                        </a>
+                    </li>)}
+                    </ul>
+            </div>
         </aside>
 
-        <div className="flex flex-column col col-9">
-          <main className="chat flex flex-column flex-1 clear" ref={main => { this.chat = main; }}>
-            {messages.map(message => <div key={message._id} className="message flex flex-row">
+        <div className="content" >
+          <div className="main" ref={main => { this.chat = main; }}>
+            {messages.map(message => <div key={message._id} className="message">
               <img src={message.user.avatar} alt={message.user.email} className="avatar" />
               <div className="message-wrapper">
                 <p className="message-header">
-                  <span className="username font-600">{message.user.email}</span>
-                  <span className="sent-date font-300">{moment(message.createdAt).format('MMM Do, hh:mm:ss')}</span>
+                  <span className="username">{message.user.email} </span>
+                  <span className="sent-date">{moment(message.createdAt).format('MMM Do, hh:mm:ss')}</span>
                 </p>
-                <p className="message-content font-300">{message.text}</p>
+                <p className="message-content">{message.text}</p>
               </div>
             </div>)}
-          </main>
-
-          <form onSubmit={this.sendMessage.bind(this)} className="flex flex-row flex-space-between" id="send-message">
-            <input type="text" name="text" className="flex flex-1" />
-            <button className="button-primary" type="submit">Send</button>
-          </form>
+          </div>
         </div>
-      </div>
+
+
+          <footer>
+              <form onSubmit={this.sendMessage.bind(this)} id="send-message">
+                  <input type="text" name="text" maxLength="100"/>
+                  <button className="button-primary" type="submit">Send</button>
+              </form>
+          </footer>
     </main>;
   }
 }

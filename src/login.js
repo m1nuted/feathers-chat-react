@@ -12,19 +12,19 @@ export default class Login extends Component {
   }
 
   login() {
-    const { email, password } = this.state;
+    const { email, password, location } = this.state;
 
     return client.authenticate({
       strategy: 'local',
-      email, password
+      email, password, location
     }).catch(error => this.setState({ error }));
   }
 
   signup() {
-    const { email, password } = this.state;
+    const { email, password, location } = this.state;
 
     return client.service('users')
-      .create({ email, password })
+      .create({ email, password, location })
       .then(() => this.login());
   }
 
@@ -47,6 +47,10 @@ export default class Login extends Component {
             <fieldset>
               <input className="block" type="password" name="password" placeholder="password" onChange={ev => this.updateField('password', ev)} />
             </fieldset>
+
+              <fieldset>
+                  <input className="block" type="text" name="location" placeholder="location" onChange={ev => this.updateField('location', ev)} />
+              </fieldset>
 
             <button type="button" className="button button-primary block signup" onClick={() => this.login()}>
               Log in

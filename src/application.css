@@ -1,0 +1,101 @@
+body{
+    background-color: whitesmoke;
+}
+
+main{
+    display:grid;
+    grid-template-areas: "header header header header"
+                        "aside content content content"
+                        "footer footer footer footer";
+
+}
+
+app form input{
+    height: 37px !important;
+}
+
+header{
+    grid-area: header;
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    margin: 10px;
+}
+
+header > .button{
+    height: 50px;
+}
+
+aside{
+    grid-area: aside;
+    text-align: center;
+    border: solid 3px lightgrey;
+}
+
+span a{
+    color: blue !important;
+}
+
+h4{
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 40px;
+}
+
+
+.content{
+    grid-area: content;
+    background-color: lightcyan;
+    max-height: 70vh;
+    min-height: 70vh;
+    overflow: hidden scroll;
+}
+
+footer{
+    grid-area: footer;
+    width: 100%;
+    text-align: center;
+}
+
+.message{
+    display: flex;
+    border: 1px solid black;
+    text-overflow:ellipsis;
+}
+
+.message:nth-child(even){
+    background-color: lightsteelblue;
+}
+
+.message img{
+    min-width: 106px;
+    margin-right: 5px;
+}
+
+.message{
+}
+
+.username{
+    font-weight: bolder;
+    font-size: large;
+}
+
+.sent-date{
+    color:red;
+    font-size: smaller;
+}
+
+#send-message input{
+    margin: 10px;
+    height: 40px;
+    width: 80%;
+}
+
+#send-message button{
+    width: 15%;
+}
+

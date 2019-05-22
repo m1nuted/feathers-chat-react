@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Login from './login';
 import Chat from './chat';
 import client from './feathers';
+import './application.css';
 
 class Application extends Component {
   constructor(props) {
@@ -58,7 +59,7 @@ class Application extends Component {
 
   render() {
     if(this.state.login === undefined) {
-      return <main className="container text-center">
+      return <main className="container">
         <h1>Loading...</h1>
       </main>;
     } else if(this.state.login) {
